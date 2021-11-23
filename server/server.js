@@ -13,6 +13,17 @@ const PORT = process.env.PORT || 3001;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+async function startApolloServer() {
+  let apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: authMiddleware
+  });
+  await apolloServer.start();
+  apolloServer.applyMiddleware({ app });
+}
+startApolloServer();
+
 // if we're in production, serve client/build as static assets
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
